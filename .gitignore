@@ -17,3 +17,5 @@ venv/
 
 # Environment variables
 .env
+/src/core/__init__.py
+/src/__init__.py

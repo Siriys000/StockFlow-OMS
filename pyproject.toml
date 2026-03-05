@@ -27,14 +27,16 @@ dev = [
     "ruff (>=0.15.4,<0.16.0)",
     "mypy (>=1.19.1,<2.0.0)",
     "pre-commit (>=4.5.1,<5.0.0)",
-    "pytest (>=9.0.2,<10.0.0)"
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-asyncio (>=1.3.0,<2.0.0)",
+    "httpx (>=0.28.1,<0.29.0)"
 ]
 
 
 
 [tool.ruff]
 # Длина строки
-line-length = 88
+line-length = 120
 target-version = "py312"
 
 [tool.ruff.lint]
@@ -45,3 +47,14 @@ select = ["E", "F", "I"]
 python_version = "3.12"
 strict = true
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+# Автоматически распознавать async тесты
+asyncio_mode = "auto"
+# Область видимости event_loop по умолчанию
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+# Добавляем корневую папку в PYTHONPATH для правильных импортов
+pythonpath =[
+    "."
+]

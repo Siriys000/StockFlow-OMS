@@ -1,6 +1,10 @@
 # StockFlow OMS
+![Python](https://img.shields.io/badge/python-3.12-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688.svg)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red.svg)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg)
 
-**StockFlow OMS** — это демонстрационный проект системы управления заказами, разработанный для демонстрации современных практик бэкенд-разработки на Python.
+**StockFlow OMS** — это проект системы управления заказами, разработанный для демонстрации бэкенд-разработки на Python.
 
 ### 🎯 Цель проекта
 Цель репозитория — применение промышленного стека технологий и архитектурных паттернов в бизнес-задаче. Проект намеренно использует "over-engineering" подходы (такие как Modular Monolith и Strict Typing), чтобы продемонстрировать готовность кода к масштабированию и поддержке в реальных продуктовых командах.
@@ -9,52 +13,65 @@
 - **Type Safety:** Строгая типизация с Mypy (strict mode).
 - **Architecture:** Модульный монолит с четким разделением ответственности.
 - **Reliability:** Работа с конкурентностью в БД (атомарные транзакции, блокировки).
+- **Testing:** Изолированные тесты с транзакционным роллбэком (Pytest + AsyncIO).
 - **CI/CD:** Автоматизация проверок и контейнеризация "из коробки".
 - **Observability:** Структурное логирование и готовность к мониторингу.
 
 ### ⚠️ Ограничения (Disclaimer)
-Этот проект является демонстрационным. В нем отсутствуют такие аспекты реального Enterprise, как: распределенная инфраструктура (K8s), сложная система аудита, интеграция с внешними IAM-провайдерами (Okta/Keycloak) и полноценный мониторинг (SRE).
+Проект является учебным полигоном (Sandbox). В нем упрощены некоторые аспекты (нет подходящей системы аудита, Kubernetes-манифестов и интеграции с внешними платежными шлюзами).
 
 ## 🛠 Технологический стек
 
 - **Core:** Python 3.12, FastAPI
-- **Database:** PostgreSQL + SQLAlchemy 2.0 (Async) + Alembic
+- **Database:** PostgreSQL 15, SQLAlchemy 2.0 (Async), Alembic
 - **Infrastructure:** Docker Compose
-- **Dev Tools:** Poetry, Ruff (Linter/Formatter), Mypy (Type checking), Pre-commit
+- **Dev Tools:** Pytest, Ruff, Mypy, Pre-commit
 
 ## 🏗 Архитектура
-
-Проект следует принципам **Modular Monolith**. Основная логика разделена на независимые модули внутри `src/modules/`, что позволяет легко масштабировать систему или выносить части в микросервисы.
 
 Подробное описание архитектуры см. в [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ## 🚀 Быстрый старт
 
+### Предварительные требования
+- Python 3.12+
+- Docker & Docker Compose
+- Poetry
+
+### Установка и запуск
+
 1. **Клонируйте репозиторий:**
    ```bash
-   git clone https://github.com/ваш-логин/StockFlow-OMS.git
+   git clone https://github.com/Siriys000/StockFlow-OMS.git
    cd StockFlow-OMS
    ```
 
-2. **Настройте окружение:**
+2. **Настройте переменные окружения:**
    ```bash
+   # Создаем .env из примера
    cp .env.example .env
-   # Отредактируйте .env
+   # При необходимости отредактируйте .env под свои порты
    ```
 
-3. **Запустите инфраструктуру (Docker):**
+3. **Запустите инфраструктуру (БД):**
    ```bash
    docker compose up -d
    ```
 
-4. **Установите зависимости и активируйте окружение:**
+4. **Установите зависимости и примените миграции:**
    ```bash
    poetry install
-   poetry shell
+   poetry run alembic upgrade head
    ```
 
-5. **Запуск тестов:**
+5. **Запустите сервер:**
    ```bash
-   pytest
+   poetry run uvicorn src.main:app --reload
+   ```
+   Документация API будет доступна по адресу: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+6. **Запуск тестов:**
+   ```bash
+   poetry run pytest -v
    ```
 ---
