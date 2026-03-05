@@ -41,10 +41,15 @@ StockFlow-OMS/
 ├── .github/             # CI/CD Workflows
 ├── migrations/          # SQL миграции (Alembic)
 ├── src/
+│   ├── main.py          # Точка входа приложения
 │   ├── core/            # Глобальные конфиги, исключения, драйвер БД
 │   ├── modules/         # Бизнес-логика (Auth, Orders, Inventory) - в разработке
-│   ├── main.py          # Точка входа приложения
-│   └── ...
+    └── auth/
+        ├── __init__.py
+        ├── models.py      # SQLAlchemy модель (БД)
+        ├── schemas.py     # Pydantic схемы (Валидация API)
+        ├── security.py    # Логика хэшей и токенов
+        └── router.py      # FastAPI эндпоинты
 ├── tests/               # Тесты (Pytest)
 ├── docker-compose.yml   # Инфраструктура (БД)
 ├── pyproject.toml       # Зависимости и настройки (Poetry)
