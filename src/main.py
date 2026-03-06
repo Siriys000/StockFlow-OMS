@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db import get_async_session
 from src.modules.auth.router import router as auth_router
+from src.modules.inventory.router import router as inventory_router
 
 app = FastAPI(
     title="StockFlow OMS API",
@@ -12,6 +13,7 @@ app = FastAPI(
 )
 
 app.include_router(auth_router)
+app.include_router(inventory_router)
 
 
 @app.get("/health", tags=["System"])
