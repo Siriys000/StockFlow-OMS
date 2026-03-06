@@ -12,6 +12,11 @@ class Settings(BaseSettings):
     # Тестовая БД (с дефолтным значением на случай, если забудем в .env)
     POSTGRES_TEST_DB: str = "pyflow_oms_test"
 
+    # JWT Auth
+    SECRET_KEY: str
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
     # Вычисляемое свойство (не читается из .env напрямую, собирается из частей)
     @property
     def DATABASE_URL(self) -> str:

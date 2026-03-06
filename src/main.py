@@ -3,12 +3,15 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db import get_async_session
+from src.modules.auth.router import router as auth_router
 
 app = FastAPI(
     title="StockFlow OMS API",
     description="Система управления заказами и складом",
     version="1.0.0",
 )
+
+app.include_router(auth_router)
 
 
 @app.get("/health", tags=["System"])
