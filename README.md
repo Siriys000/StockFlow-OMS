@@ -4,7 +4,6 @@
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red.svg)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![CI Pipeline](https://github.com/Siriys00/StockFlow-OMS/actions/workflows/ci.yml/badge.svg)](https://github.com/Siriys000/StockFlow-OMS/actions)
 
 **StockFlow OMS** — это проект системы управления заказами, разработанный для демонстрации бэкенд-разработки на Python.
 
