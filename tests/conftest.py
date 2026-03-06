@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from src.core.config import settings
 from src.core.db import Base, get_async_session
 from src.main import app
+from src.modules.auth.models import User, UserRole  # noqa: F401
+from src.modules.auth.security import create_access_token, get_password_hash  # noqa: F401
 
 # 1. Движок для создания самой базы данных (подключаемся к дефолтной БД 'postgres')
 # Уровень изоляции AUTOCOMMIT обязателен для команды CREATE DATABASE
@@ -83,3 +85,24 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
     app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def auth_headers(db_session: AsyncSession) -> dict[str, str]:
+    """Создает тестового админа и возвращает заголовки авторизации."""
+    email = "test_admin@example.com"
+    password = "password"
+    hashed_pwd = get_password_hash(password)
+
+    # Проверяем, нет ли уже такого юзера (на всякий случай)
+    # ... (код проверки опустим для краткости, так как db_session чистится) ...
+
+    user = User(email=email, hashed_password=hashed_pwd, role=UserRole.ADMIN, is_active=True)
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+
+    # Генерируем токен вручную (без обращения к API логина)
+    token = create_access_token(data={"sub": str(user.id)})
+
+    return {"Authorization": f"Bearer {token}"}
