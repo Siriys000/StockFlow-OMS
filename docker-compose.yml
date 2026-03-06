@@ -17,5 +17,57 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: pyflow_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Мониторинг задач
+  flower:
+    image: mher/flower:0.9.7
+    container_name: pyflow_flower
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+
+    # Наше основное API
+  app:
+    build: .
+    container_name: pyflow_app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+      - REDIS_HOST=redis
+    depends_on:
+      - db
+      - redis
+
+  # Наш фоновый воркер
+  worker:
+    build: .
+    container_name: pyflow_worker
+    command: celery -A src.worker.celery_app worker -l info -P solo
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+      - REDIS_HOST=redis
+    depends_on:
+      - db
+      - redis
+
 volumes:
   postgres_data:

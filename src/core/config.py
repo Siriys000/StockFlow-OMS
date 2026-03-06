@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
+    # --- Celery & Redis ---
+    REDIS_HOST: str = "localhost"  # В докере (prod) будет "redis"
+    REDIS_PORT: int = 6379
+
     # Вычисляемое свойство (не читается из .env напрямую, собирается из частей)
     @property
     def DATABASE_URL(self) -> str:
@@ -27,6 +31,15 @@ class Settings(BaseSettings):
     def TEST_DATABASE_URL(self) -> str:
         # Тот же URL, но с подстановкой тестовой БД
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_TEST_DB}"
+
+    @property
+    def CELERY_BROKER_URL(self) -> str:
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
+
+    @property
+    def CELERY_RESULT_BACKEND(self) -> str:
+        # Храним результаты задач тоже в Redis (в 1-й базе)
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1"
 
     model_config = SettingsConfigDict(
         env_file=".env",
