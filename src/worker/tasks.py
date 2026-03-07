@@ -11,8 +11,7 @@ logger = logging.getLogger(__name__)
 # и Mypy "теряет" контекст функции при использовании декоратора @celery.task
 
 
-# type: ignore[untyped-decorator]
-@celery.task(name="tasks.send_order_confirmation")
+@celery.task(name="tasks.send_order_confirmation")  # type: ignore[untyped-decorator]
 def send_order_confirmation(order_id: int, user_email: str, total_amount: str) -> str:
     """
     Фоновая задача отправки Email.
@@ -29,8 +28,7 @@ def send_order_confirmation(order_id: int, user_email: str, total_amount: str) -
     return f"Email sent to {user_email}"
 
 
-# type: ignore[untyped-decorator]
-@celery.task(name="tasks.generate_invoice_pdf")
+@celery.task(name="tasks.generate_invoice_pdf")  # type: ignore[untyped-decorator]
 def generate_invoice_pdf(order_id: int) -> str:
     """
     Имитация тяжелой задачи генерации PDF.
