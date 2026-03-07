@@ -28,7 +28,7 @@ async def list_products(service: InventoryService = Depends(get_inventory_servic
     return await service.get_all_products()
 
 
-@router.post("/{product_id}/consume")
+@router.post("/{product_id}/consume", response_model=ProductResponse)
 async def consume_product(
     product_id: int,
     amount: int,
