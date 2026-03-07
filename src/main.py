@@ -19,7 +19,7 @@ app.include_router(orders_router)
 
 
 @app.get("/health", tags=["System"])
-async def healthcheck(session: AsyncSession = Depends(get_async_session)):
+async def healthcheck(session: AsyncSession = Depends(get_async_session)) -> dict[str, str]:
     """
     Проверка работоспособности API и подключения к БД.
     """

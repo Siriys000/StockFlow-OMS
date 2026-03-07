@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def register(user_in: UserCreate, user_service: UserService = Depends(get_user_service)):
+async def register(user_in: UserCreate, user_service: UserService = Depends(get_user_service)) -> Any:
     """
     Регистрация нового пользователя.
     """
@@ -35,9 +36,10 @@ async def register(user_in: UserCreate, user_service: UserService = Depends(get_
 @router.post("/login", response_model=Token)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(), user_service: UserService = Depends(get_user_service)
-):
+) -> dict[str, str]:
     """
     Аутентификация пользователя и выдача JWT токена.
+    Возвращает словарь, подходящий под схему Token.
     """
     # В form_data.username будет лежать наш email, так как OAuth2 стандарт называет поле username
     user = await user_service.authenticate_user(form_data.username, form_data.password)
@@ -57,7 +59,7 @@ async def login(
 
 
 @router.get("/me", response_model=UserResponse)
-async def read_users_me(current_user: User = Depends(get_current_active_user)):
+async def read_users_me(current_user: User = Depends(get_current_active_user)) -> Any:
     """
     Возвращает информацию о текущем авторизованном пользователе.
     (Защищенный роут, требует токен)
@@ -66,7 +68,7 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 
 
 @router.get("/admin-only")
-async def admin_only_route(current_user: User = Depends(RoleChecker([UserRole.ADMIN]))):
+async def admin_only_route(current_user: User = Depends(RoleChecker([UserRole.ADMIN]))) -> dict[str, str]:
     """
     Тестовый роут только для администраторов.
     """

@@ -1,3 +1,5 @@
+from typing import Any
+
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -25,13 +27,15 @@ async def get_current_user(
 
     try:
         # Расшифровываем токен
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        # Достаем ID (мы положили его в поле 'sub' при логине)
-        user_id_str: str = payload.get("sub")
-        if user_id_str is None or not isinstance(user_id_str, str):
+        # Указываем Mypy, что payload - это словарь
+        payload: dict[str, Any] = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+
+        # Безопасно достаем sub
+        user_id_val = payload.get("sub")
+        if user_id_val is None:
             raise credentials_exception
 
-        user_id = int(user_id_str)
+        user_id = int(str(user_id_val))
 
     except (jwt.PyJWTError, ValueError):
         # Ловим ошибки: токен протух, подделан или ID не число
@@ -54,10 +58,10 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
 
 # Класс-генератор зависимостей для проверки ролей
 class RoleChecker:
-    def __init__(self, allowed_roles: list[UserRole]):
+    def __init__(self, allowed_roles: list[UserRole]) -> None:
         self.allowed_roles = allowed_roles
 
-    def __call__(self, user: User = Depends(get_current_active_user)):
+    def __call__(self, user: User = Depends(get_current_active_user)) -> User:
         if user.role not in self.allowed_roles:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Operation not permitted")
         return user

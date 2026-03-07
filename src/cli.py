@@ -15,7 +15,7 @@ async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
 @app.command()
-def version():
+def version() -> None:
     """Показать версию OMS CLI."""
     typer.echo("OMS CLI Version: 0.0.1")
 
@@ -24,10 +24,10 @@ def version():
 def create_admin(
     email: str = typer.Argument(..., help="Email администратора"),
     password: str = typer.Argument(..., help="Пароль администратора"),
-):
+) -> None:
     """Создать пользователя с правами ADMIN."""
 
-    async def _create():
+    async def _create() -> None:
         async with async_session() as session:
             try:
                 hashed = get_password_hash(password)

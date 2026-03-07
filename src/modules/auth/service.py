@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,10 +11,10 @@ from src.modules.auth.security import get_password_hash, verify_password
 
 
 class UserService:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def authenticate_user(self, email: str, password: str) -> User | None:
+    async def authenticate_user(self, email: str, password: str) -> Optional[User]:
         """Проверяет email и пароль. Возвращает User или None, если данные неверны."""
         user = await self.get_user_by_email(email)
         if not user:
@@ -21,7 +23,7 @@ class UserService:
             return None
         return user
 
-    async def get_user_by_email(self, email: str) -> User | None:
+    async def get_user_by_email(self, email: str) -> Optional[User]:
         """Ищет пользователя по email."""
         # Используем современный синтаксис SQLAlchemy 2.0 (select)
         query = select(User).where(User.email == email)
@@ -41,7 +43,7 @@ class UserService:
 
         return new_user
 
-    async def get_user_by_id(self, user_id: int) -> User | None:
+    async def get_user_by_id(self, user_id: int) -> Optional[User]:
         """Ищет пользователя по ID."""
         query = select(User).where(User.id == user_id)
         result = await self.session.execute(query)

@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 @celery.task(name="tasks.send_order_confirmation")
-def send_order_confirmation(order_id: int, user_email: str, total_amount: str):
+def send_order_confirmation(order_id: int, user_email: str, total_amount: str) -> str:
     """
     Фоновая задача отправки Email.
     Важно: Celery-задачи в Python обычно СИНХРОННЫЕ (не async def).
@@ -25,7 +25,7 @@ def send_order_confirmation(order_id: int, user_email: str, total_amount: str):
 
 
 @celery.task(name="tasks.generate_invoice_pdf")
-def generate_invoice_pdf(order_id: int):
+def generate_invoice_pdf(order_id: int) -> str:
     """
     Имитация тяжелой задачи генерации PDF.
     """

@@ -8,7 +8,7 @@ from src.modules.inventory.schemas import ProductCreate
 
 
 class InventoryService:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def create_product(self, product_in: ProductCreate) -> Product:
