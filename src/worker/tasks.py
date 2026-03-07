@@ -7,6 +7,11 @@ from src.worker.celery_app import celery
 logger = logging.getLogger(__name__)
 
 
+# Библиотека Celery не имеет аннотаций типов,
+# и Mypy "теряет" контекст функции при использовании декоратора @celery.task
+
+
+# type: ignore[untyped-decorator]
 @celery.task(name="tasks.send_order_confirmation")
 def send_order_confirmation(order_id: int, user_email: str, total_amount: str) -> str:
     """
@@ -24,6 +29,7 @@ def send_order_confirmation(order_id: int, user_email: str, total_amount: str) -
     return f"Email sent to {user_email}"
 
 
+# type: ignore[untyped-decorator]
 @celery.task(name="tasks.generate_invoice_pdf")
 def generate_invoice_pdf(order_id: int) -> str:
     """

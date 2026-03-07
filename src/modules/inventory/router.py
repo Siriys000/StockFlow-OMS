@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, status
 
 from src.modules.auth.dependencies import RoleChecker
-from src.modules.auth.models import UserRole
+from src.modules.auth.models import User, UserRole
 from src.modules.inventory.schemas import ProductCreate, ProductResponse
 from src.modules.inventory.service import InventoryService, get_inventory_service
 
@@ -14,10 +14,11 @@ router = APIRouter(prefix="/inventory", tags=["Inventory"])
 async def create_product(
     product_in: ProductCreate,
     # Только админ может добавлять товары
-    _=Depends(RoleChecker([UserRole.ADMIN])),
+    current_user: User = Depends(RoleChecker([UserRole.ADMIN])),
     service: InventoryService = Depends(get_inventory_service),
 ) -> Any:
     """Добавить новый товар на склад (Только для Admin)."""
+    _ = current_user  # current_user нам не нужен внутри функции, поэтому используем _
     return await service.create_product(product_in)
 
 
