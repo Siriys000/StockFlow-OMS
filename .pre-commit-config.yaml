@@ -8,6 +8,16 @@ repos:
       - id: ruff-format
         exclude: ^(README\.md|ARCHITECTURE\.md|\.github/.*)$
 
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        # Mypy будет автоматически читать настройки из твоего pyproject.toml
+        args: [ --config-file, pyproject.toml ]
+        # Важно: Mypy должен видеть твои зависимости,
+        # поэтому указываем, что он должен запускаться в том же окружении
+        additional_dependencies: [ pydantic, sqlalchemy, fastapi ]
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
