@@ -28,7 +28,7 @@ async def get_current_user(
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         # Достаем ID (мы положили его в поле 'sub' при логине)
         user_id_str: str = payload.get("sub")
-        if user_id_str is None:
+        if user_id_str is None or not isinstance(user_id_str, str):
             raise credentials_exception
 
         user_id = int(user_id_str)

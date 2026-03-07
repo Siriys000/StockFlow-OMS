@@ -66,3 +66,15 @@ asyncio_default_test_loop_scope = "session"
 pythonpath =[
     "."
 ]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+plugins = [
+  "pydantic.mypy"
+]
+
+[[tool.mypy.overrides]]
+module = "celery.*"
+ignore_missing_imports = true
