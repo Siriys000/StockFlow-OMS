@@ -74,12 +74,26 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Нужно для mkdocs, чтобы видеть историю
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install dependencies
-        run: |
-          pip install mkdocs-material mkdocstrings[python]
+
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install Project Dependencies
+        # Нам нужны все зависимости, чтобы mkdocstrings мог импортировать код
+        run: poetry install
+
       - name: Deploy Docs
-        run: mkdocs gh-deploy --force
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+
+          poetry run mkdocs gh-deploy --force
