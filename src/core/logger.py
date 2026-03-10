@@ -1,5 +1,6 @@
 import logging
-from typing import Any  # noqa: F401
+from collections.abc import MutableMapping  # noqa: F401
+from typing import Any
 
 import structlog
 from asgi_correlation_id import correlation_id
@@ -34,7 +35,9 @@ def setup_logging() -> None:
     )
 
 
-def merge_correlation_id(logger: Any, method_name: str, event_dict: dict[str, Any]) -> dict[str, Any]:
+def merge_correlation_id(
+    logger: Any, method_name: str, event_dict: MutableMapping[str, Any]
+) -> MutableMapping[str, Any]:
     """Функция для извлечения request_id и добавления его в JSON лог."""
     req_id = correlation_id.get()
     if req_id:
