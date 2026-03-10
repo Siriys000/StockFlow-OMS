@@ -1,0 +1,47 @@
+site_name: StockFlow OMS Documentation
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.sections # Делает боковое меню структурированным
+    - toc.integrate       # Переносит оглавление страницы в левое меню
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: false
+            show_root_heading: true
+
+            heading_level: 3                # Делает каждую функцию заголовком (H3)
+            show_symbol_type_heading: true  # Добавляет бейдж [Function] или [Class]
+            show_symbol_type_toc: true      # Добавляет иконки в оглавление
+            separate_signature: true        # Выносит (аргументы) на новую строку, если их много
+            show_signature_annotations: true # Показывает типы данных (str, int)
+            docstring_section_style: list   # Форматирует Args и Returns в виде списков
+
+nav:
+  - Главная: index.md
+  - Архитектура: architecture.md
+  - API Reference: api.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - toc:
+      permalink: true

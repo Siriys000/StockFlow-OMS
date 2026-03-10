@@ -1,12 +1,9 @@
 # StockFlow OMS
-[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://Siriys000.github.io/StockFlow-OMS/)
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688.svg)
-![alt text](https://img.shields.io/badge/Redis-7.0-red.svg)
-![alt text](https://img.shields.io/badge/Celery-5.3-green.svg)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red.svg)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg)
-![alt text](https://github.com/Siriys000/StockFlow-OMS/actions/workflows/ci.yml/badge.svg)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 **StockFlow OMS** — это проект системы управления заказами, разработанный для демонстрации бэкенд-разработки на Python.
 
@@ -17,31 +14,23 @@
 - **Type Safety:** Строгая типизация с Mypy (strict mode).
 - **Architecture:** Модульный монолит с разделением ответственности.
 - **Reliability:** Работа с конкурентностью в БД.
-- **Security:** JWT-авторизация и Role-Based Access Control (**RBAC**) — разграничение прав для Admin и Customer.
-- **Distributed Tasks**: Фоновая обработка тяжелых задач через Celery + Redis.
 - **Testing:** Изолированные тесты с транзакционным роллбэком (Pytest + AsyncIO).
 - **CI/CD:** Автоматизация проверок и контейнеризация.
 - **Observability:** Структурное логирование и готовность к мониторингу.
 
 ### ⚠️ Ограничения (Disclaimer)
-Проект является учебным полигоном (Sandbox). В нем упрощены некоторые аспекты.
+Проект является учебным полигоном (Sandbox). В нем упрощены некоторые аспекты (нет подходящей системы аудита, Kubernetes-манифестов и интеграции с внешними платежными шлюзами).
 
 ## 🛠 Технологический стек
 
-- **Core:** Python 3.12, FastAPI, Pydantic V2
+- **Core:** Python 3.12, FastAPI
 - **Database:** PostgreSQL 15, SQLAlchemy 2.0 (Async), Alembic
-- **Async Tasks:** Celery, Redis
-- **Deployment:** Docker, Docker Compose, Makefile, GitHub Actions (CI)
-- **Quality:** Pytest, Ruff, Mypy
+- **Infrastructure:** Docker Compose
+- **Dev Tools:** Pytest, Ruff, Mypy, Pre-commit
 
 ## 🏗 Архитектура
 
-Подробное описание архитектуры см. в [docs/architecture.md](docs/architecture.md).
-
-## 📖 Документация
-Подробное описание API доступно на: 
-
-👉 **[Siriys000.github.io/StockFlow-OMS/](https://Siriys000.github.io/StockFlow-OMS/)**
+Подробное описание архитектуры см. в [ARCHITECTURE.md](architecture.md).
 
 ## 🚀 Быстрый старт
 
@@ -70,23 +59,20 @@
    docker compose up -d
    ```
 
-### Через Docker (Рекомендуется)
-Самый простой способ поднять всю инфраструктуру (БД, Redis, API, Worker, Flower):
-
-1. **Запустите проект одной командой:**
+4. **Установите зависимости и примените миграции:**
    ```bash
-   make build
+   poetry install
+   poetry run alembic upgrade head
    ```
-2. **Доступные интерфейсы:**
-   - **API Docs (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
-   - **Celery Monitor (Flower):** [http://localhost:5555](http://localhost:5555)
 
-### Локальная разработка
-Если вы хотите запустить проект вне контейнеров:
-```bash
-poetry install
-make up          # Поднимет только Postgres и Redis в Docker
-make migrate     # Применит миграции БД
-make run         # Запустит FastAPI сервер
-```
+5. **Запустите сервер:**
+   ```bash
+   poetry run uvicorn src.main:app --reload
+   ```
+   Документация API будет доступна по адресу: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+6. **Запуск тестов:**
+   ```bash
+   poetry run pytest -v
+   ```
 ---

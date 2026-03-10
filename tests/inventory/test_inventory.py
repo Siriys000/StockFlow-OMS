@@ -12,13 +12,15 @@ TEST_QUANTITY = 10
 
 
 # 1. ТЕСТ НА СОЗДАНИЕ ТОВАРА (АДМИН)
-async def test_create_product_admin(client: AsyncClient, db_session: AsyncSession, auth_headers: dict):
+async def test_create_product_admin(
+    client: AsyncClient, db_session: AsyncSession, auth_headers: dict[str, str]
+) -> None:
     """Администратор может создавать товары через API."""
 
     payload = {"sku": TEST_SKU, "name": TEST_NAME, "price": TEST_PRICE, "quantity": TEST_QUANTITY}
 
     # Используем фикстуру auth_headers, которая уже содержит токен админа
-    response = await client.post("/inventory/", json=payload, headers=auth_headers)
+    response = await client.post("/api/v1/inventory/", json=payload, headers=auth_headers)
 
     assert response.status_code == 201
     data = response.json()
@@ -36,7 +38,9 @@ async def test_create_product_admin(client: AsyncClient, db_session: AsyncSessio
 
 
 # 2. ТЕСТ НА СПИСАНИЕ ТОВАРА
-async def test_consume_stock_success(client: AsyncClient, db_session: AsyncSession, auth_headers: dict):
+async def test_consume_stock_success(
+    client: AsyncClient, db_session: AsyncSession, auth_headers: dict[str, str]
+) -> None:
     """Пользователь может списать товар, если его достаточно."""
 
     # Подготовка: создаем товар в БД напрямую
@@ -49,7 +53,7 @@ async def test_consume_stock_success(client: AsyncClient, db_session: AsyncSessi
     # ВАЖНО: 'amount' передается как Query-параметр (?amount=2)
     consume_amount = 2
     response = await client.post(
-        f"/inventory/{product.id}/consume", params={"amount": consume_amount}, headers=auth_headers
+        f"/api/v1/inventory/{product.id}/consume", params={"amount": consume_amount}, headers=auth_headers
     )
 
     assert response.status_code == 200
@@ -62,7 +66,9 @@ async def test_consume_stock_success(client: AsyncClient, db_session: AsyncSessi
 
 
 # 3. ТЕСТ НА ОШИБКУ (НЕДОСТАТОЧНО ТОВАРА)
-async def test_consume_stock_insufficient(client: AsyncClient, db_session: AsyncSession, auth_headers: dict):
+async def test_consume_stock_insufficient(
+    client: AsyncClient, db_session: AsyncSession, auth_headers: dict[str, str]
+) -> None:
     """Система должна вернуть 400, если товара на складе меньше, чем запрашивается."""
 
     # Подготовка: товар с остатком 1
@@ -72,7 +78,7 @@ async def test_consume_stock_insufficient(client: AsyncClient, db_session: Async
     await db_session.refresh(product)
 
     # Пытаемся списать 2 штуки
-    response = await client.post(f"/inventory/{product.id}/consume", params={"amount": 2}, headers=auth_headers)
+    response = await client.post(f"/api/v1/inventory/{product.id}/consume", params={"amount": 2}, headers=auth_headers)
 
     assert response.status_code == 400
     assert "Not enough stock" in response.json()["detail"]

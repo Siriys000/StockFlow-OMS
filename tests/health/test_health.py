@@ -1,4 +1,7 @@
-async def test_healthcheck(client):
+from httpx import AsyncClient
+
+
+async def test_healthcheck(client: AsyncClient) -> None:
     """
     Проверяем, что API живо и база подключена.
     Фикстура 'client' внедряется автоматически из conftest.py.

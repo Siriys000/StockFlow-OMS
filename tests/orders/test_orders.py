@@ -6,7 +6,9 @@ from src.modules.inventory.models import Product
 from src.modules.orders.models import Order
 
 
-async def test_create_order_success(client: AsyncClient, db_session: AsyncSession, auth_headers: dict):
+async def test_create_order_success(
+    client: AsyncClient, db_session: AsyncSession, auth_headers: dict[str, str]
+) -> None:
     """Тест успешного создания заказа и списания товаров."""
 
     # 1. Подготовка: создаем товар
@@ -18,7 +20,7 @@ async def test_create_order_success(client: AsyncClient, db_session: AsyncSessio
     # 2. Действие: оформляем заказ на 2 штуки
     payload = {"items": [{"product_id": product.id, "quantity": 2}]}
 
-    response = await client.post("/orders/", json=payload, headers=auth_headers)
+    response = await client.post("/api/v1/orders/", json=payload, headers=auth_headers)
 
     # 3. Проверки ответа API
     assert response.status_code == 201
@@ -39,8 +41,8 @@ async def test_create_order_success(client: AsyncClient, db_session: AsyncSessio
 
 
 async def test_create_order_insufficient_stock_rollback(
-    client: AsyncClient, db_session: AsyncSession, auth_headers: dict
-):
+    client: AsyncClient, db_session: AsyncSession, auth_headers: dict[str, str]
+) -> None:
     """
     Тест отката транзакции (Rollback):
     Если товара не хватает, заказ НЕ должен создаться.
@@ -58,7 +60,7 @@ async def test_create_order_insufficient_stock_rollback(
     # 2. Действие: пытаемся купить 5 штук
     payload = {"items": [{"product_id": product.id, "quantity": 5}]}
 
-    response = await client.post("/orders/", json=payload, headers=auth_headers)
+    response = await client.post("/api/v1/orders/", json=payload, headers=auth_headers)
 
     # 3. Проверки API: должна быть ошибка 400
     assert response.status_code == 400

@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+import structlog
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,6 +11,8 @@ from src.modules.auth.models import User
 from src.modules.inventory.service import InventoryService  # Переиспользуем логику склада!
 from src.modules.orders.models import Order, OrderItem, OrderStatus
 from src.modules.orders.schemas import OrderCreate
+
+log = structlog.get_logger()
 
 
 class OrderService:
@@ -22,6 +25,8 @@ class OrderService:
         Создает заказ и списывает товары в единой транзакции.
         Если товара не хватит - вся транзакция откатится автоматически.
         """
+        log.info("order_creation_started", user_id=user.id, items_count=len(order_in.items))
+
         total_amount = Decimal("0.00")
         order_items = []
 
@@ -61,6 +66,9 @@ class OrderService:
         )
 
         result = await self.session.execute(query)
+
+        log.info("order_created_successfully", order_id=new_order.id, total_amount=str(total_amount))
+
         return result.scalar_one()  # Возвращаем полностью загруженный заказ
 
 

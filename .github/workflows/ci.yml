@@ -67,3 +67,19 @@ jobs:
 
     - name: Run Pytest
       run: poetry run pytest -v
+
+  deploy_docs:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install mkdocs-material mkdocstrings[python]
+      - name: Deploy Docs
+        run: mkdocs gh-deploy --force
