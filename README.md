@@ -31,6 +31,7 @@
 - **Core:** Python 3.12, FastAPI, Pydantic V2
 - **Database:** PostgreSQL 15, SQLAlchemy 2.0 (Async), Alembic
 - **Async Tasks:** Celery, Redis
+- **Frontend (UI Extension):** React, Vite, Tailwind CSS, Axios
 - **Deployment:** Docker, Docker Compose, Makefile, GitHub Actions (CI)
 - **Quality:** Pytest, Ruff, Mypy
 
@@ -89,4 +90,23 @@ make up          # Поднимет только Postgres и Redis в Docker
 make migrate     # Применит миграции БД
 make run         # Запустит FastAPI сервер
 ```
+
+#### Запуск Frontend (Vite)
+Фронтенд находится в папке `frontend`. Для работы требуется [Node.js](https://nodejs.org/).
+```bash
+cd frontend
+npm install      # Установка зависимостей
+npm run dev      # Запуск сервера разработки
+```
+
+## 🛠 Администрирование
+Для управления системой и создания первого администратора используйте CLI. Это безопаснее, чем открывать такие эндпоинты в публичном API.
+
+### Создание администратора
+Выполните команду внутри работающего контейнера или локально (если настроено окружение):
+```bash
+# Через Docker (рекомендуется)
+docker exec pyflow_app python src/cli.py create-admin admin@oms.com superpassword
+```
+После создания вы сможете зайти в **Admin Panel** в веб-интерфейсе.
 ---
