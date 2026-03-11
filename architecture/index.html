@@ -484,11 +484,12 @@
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│   ├── worker/           # Celery App и фоновые задачи
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│   ├── cli.py            # Административный интерфейс
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│   └── main.py           # Точка входа FastAPI
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>├── tests/                # Автотесты
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>├── utils/                # Вспомогательные скрипты
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>├── Dockerfile            # Инструкции по сборке образа
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>├── Makefile              # Команды автоматизации
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>└── pyproject.toml        # Менеджер зависимостей Poetry
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>├── frontend/             # Frontend: React + Vite + Tailwind CSS
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>├── tests/                # Автотесты
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>├── utils/                # Вспомогательные скрипты
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>├── Dockerfile            # Инструкции по сборке образа
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>├── Makefile              # Команды автоматизации
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>└── pyproject.toml        # Менеджер зависимостей Poetry
 </span></code></pre></div>
 <h2 id="_3">📂 Описание ключевых слоев<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-srccore-shared-kernel">1. <code>src/core/</code> (Инфраструктура и Shared Kernel)<a class="headerlink" href="#1-srccore-shared-kernel" title="Permanent link">&para;</a></h3>
@@ -524,7 +525,12 @@
 </ul>
 <h3 id="4-srcclipy">4. <code>src/cli.py</code> (Инструменты администратора)<a class="headerlink" href="#4-srcclipy" title="Permanent link">&para;</a></h3>
 <p>CLI-интерфейс на базе <strong>Typer</strong>. Используется для DevOps-задач и администрирования.
-*   <em>Зачем это нужно:</em> Создание первого суперюзера (admin) не следует выставлять в публичный REST API. Для этого написана команда <code>create-admin</code>, которая выполняется напрямую на сервере или внутри Docker-контейнера.
+*   <em>Зачем это нужно:</em> Создание первого суперюзера (admin) не следует выставлять в публичный REST API.
+*   <em>Команды:</em>
+    *   <code>create-admin &lt;email&gt; &lt;password&gt;</code>: Создает пользователя с ролью <code>ADMIN</code>.
+*   <em>Пример запуска:</em>
+    <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pyflow_app<span class="w"> </span>python<span class="w"> </span>src/cli.py<span class="w"> </span>create-admin<span class="w"> </span>admin@oms.com<span class="w"> </span>password123
+</span></code></pre></div>
 *   <em>Как расширять:</em> Просто добавь новую функцию с декоратором <code>@app.command()</code> в этот файл.</p>
 <h3 id="5-migrations">5. <code>migrations/</code> (Управление схемой БД)<a class="headerlink" href="#5-migrations" title="Permanent link">&para;</a></h3>
 <p>Папка создается и управляется автоматически утилитой <strong>Alembic</strong>.
