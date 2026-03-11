@@ -4,9 +4,11 @@ from typing import AsyncIterator
 import structlog
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import APIRouter, Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.config import settings
 from src.core.db import get_async_session
 from src.core.logger import setup_logging
 from src.modules.auth.router import router as auth_router
@@ -33,6 +35,15 @@ app = FastAPI(
 )
 
 app.add_middleware(CorrelationIdMiddleware)
+
+# --- Настройка CORS ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Настройка версионирования ---
 # Создаем главный роутер для v1

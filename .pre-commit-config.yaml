@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.0
+    rev: v0.15.5
     hooks:
       - id: ruff
         args: [ --fix ]
@@ -9,17 +9,21 @@ repos:
         exclude: ^(README\.md|ARCHITECTURE\.md|\.github/.*)$
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.19.1
     hooks:
       - id: mypy
         # Mypy будет автоматически читать настройки из твоего pyproject.toml
         args: [ --config-file, pyproject.toml ]
         # Важно: Mypy должен видеть твои зависимости,
         # поэтому указываем, что он должен запускаться в том же окружении
-        additional_dependencies: [ pydantic, sqlalchemy, fastapi ]
+        additional_dependencies:
+          - pydantic
+          - pydantic-settings
+          - sqlalchemy
+          - fastapi
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: check-yaml
         args: [--unsafe]

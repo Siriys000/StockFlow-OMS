@@ -32,6 +32,7 @@ services:
   # Мониторинг задач
   flower:
     image: mher/flower:0.9.7
+    restart: always
     container_name: pyflow_flower
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
@@ -43,6 +44,7 @@ services:
     # Наше основное API
   app:
     build: .
+    restart: always
     container_name: pyflow_app
     ports:
       - "8000:8000"
@@ -51,6 +53,10 @@ services:
     environment:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
+    volumes:
+      - ./src:/app/src
+      - ./migrations:/app/migrations
+      - ./alembic.ini:/app/alembic.ini
     depends_on:
       - db
       - redis
@@ -58,6 +64,7 @@ services:
   # Наш фоновый воркер
   worker:
     build: .
+    restart: always
     container_name: pyflow_worker
     command: celery -A src.worker.celery_app worker -l info -P solo
     env_file:
@@ -65,6 +72,10 @@ services:
     environment:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
+    volumes:
+      - ./src:/app/src
+      - ./migrations:/app/migrations
+      - ./alembic.ini:/app/alembic.ini
     depends_on:
       - db
       - redis

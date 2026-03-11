@@ -1,0 +1,5 @@
+{
+  "name": "StockFlow OMS",
+  "description": "Order Management System frontend with React, Vite, and Tailwind CSS",
+  "requestFramePermissions": []
+}

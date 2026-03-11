@@ -18,8 +18,13 @@ WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Копируем исходный код
-COPY . .
+# Копируем исходный код (БЕЗ frontend)
+COPY src/ ./src/
+COPY migrations/ ./migrations/
+
+# Копируем конфиги
+COPY alembic.ini .
+COPY pyproject.toml poetry.lock ./
 
 # Открываем порт для FastAPI
 EXPOSE 8000
